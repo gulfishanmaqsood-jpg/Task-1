@@ -1,0 +1,111 @@
+# Task-1
+Installed Nmap
+Finding local IP, ran Nmap -sS <IP Address> 
+Results as shown in the below screenshot
+<img width="746" height="682" alt="image" src="https://github.com/user-attachments/assets/908b41f9-5005-4b71-99c9-06e13d1a3426" />
+Found 4 open ports
+Port 1 : 135/tcp   open  msrpc
+
+Port 135/tcp is typically used by the Microsoft Remote Procedure Call (MSRPC) service, also known as the RPC Endpoint Mapper.
+Security Concerns:
+Port 135 is frequently targeted in Windows-based attacks.
+It has been associated with historical vulnerabilities like Blaster, Sasser, and Conficker worms.
+If not needed, this port should be blocked externally by firewalls.
+It's generally safe only within internal networks, never exposed to the internet.
+
+Port 2: 139/tcp   open  netbios-ssn
+
+Service on Port 139/tcp
+Port: 139/tcp
+Service Name: netbios-ssn
+Full Name: NetBIOS Session Service
+Used by: Server Message Block (SMB) protocol (on older versions)
+Common on: Windows systems (especially pre-Windows 2000)
+
+Security Implications of Port 139
+Port 139 is a major security risk when exposed to the internet:
+
+Risk	Description
+Unauthorized access	Attackers may try to access shared folders/printers
+Historical vulnerabilities	Many worms and exploits (like Conficker) have targeted SMB over port 139
+Information leakage	Can reveal computer names, workgroup/domain info, shared folders, etc.
+
+Port 3: 445/tcp   open  microsoft-ds
+
+Service on Port 445/tcp
+
+Port: 445/tcp
+Service Name: microsoft-ds
+Used by: SMB (Server Message Block) over TCP/IP
+Typical OS: Windows systems (but also available on Linux/Samba)
+
+Security Risks of Port 445
+Risk	Description
+Exploits	EternalBlue, WannaCry, and NotPetya all exploited SMB on port 445
+Unintended access	Attackers may access shared folders or admin shares
+Information leakage	Can expose system info, user accounts, network shares
+Internet exposure	Port 445 should never be exposed to the internet — it's one of the most scanned and attacked ports
+
+Port 4: 12345/tcp open  netbus
+
+Port 12345/tcp being open and labeled as netbus is a major red flag — it's strongly associated with a remote access trojan (RAT) from the late 1990s called NetBus.
+
+Service on Port 12345/tcp
+Port: 12345/tcp
+Service Name: netbus
+Used by: NetBus Remote Administration Tool (RAT)
+Type: Malware / Trojan backdoor
+Operating System: Primarily targets Windows
+
+What is NetBus?
+NetBus is one of the earliest remote control trojans, similar to Back Orifice. It allows an attacker to:
+View and control the victim’s desktop
+Log keystrokes
+Access, delete, or modify files
+Control mouse/keyboard
+Open/close CD tray (back in the day!)
+Execute arbitrary commands or programs
+
+Why Is This a Problem?
+If port 12345 is open and responding as netbus, it strongly suggests:
+The system might be infected with a NetBus trojan (or something impersonating it)
+A backdoor is listening for remote command
+The system is at serious risk of compromise
+Even though NetBus is old (from around 1998), modern malware may still reuse this port or behave similarly.
+
+Top Security Risks from Open Ports
+1. Unauthorized Access
+Open ports can expose services like RDP (3389), SSH (22), or SMB (445).
+If weak or default credentials are used, attackers can gain remote control.
+Example: Exposed RDP with a weak password = remote system takeover.
+
+2. Vulnerability Exploits
+Services listening on open ports may have known vulnerabilities.
+Attackers scan for these ports and exploit unpatched software.
+Example: EternalBlue exploited SMB on port 445, leading to WannaCry ransomware.
+
+3. Malware Communication (C2 Channels)
+Open ports can be used by malware for command-and-control (C2) communication.
+Some backdoors or RATs (e.g., NetBus on port 12345) listen on non-standard ports.
+If malware opens a port, attackers can control your machine remotely.
+
+4. Information Disclosure
+Some services leak system or network information.
+Open NetBIOS, SNMP, or FTP ports can reveal OS details, shared files, or device names.
+Example: NetBIOS on port 139 can expose shared folders and usernames.
+
+5. Denial of Service (DoS) Attacks
+Open ports increase the attack surface for flooding or crashing services.
+Attackers can send malformed or excessive requests to overwhelm a service.
+Example: Open DNS resolvers (port 53) can be abused in DDoS amplification attacks.
+
+6. Lateral Movement Inside Network
+
+Once attackers get into one system, open ports let them move laterally to others.
+Services like SMB, WinRM, or SSH help attackers pivot and expand control.
+They exploit one weak link, then spread across your network.
+
+7. Port Knocking or Backdoors
+
+Some ports might not appear suspicious but are used in port knocking or custom backdoors.
+Can be used to evade detection until triggered by a specific pattern.
